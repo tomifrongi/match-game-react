@@ -25,12 +25,36 @@ tbody td {
 }
 
 
-.numberButton {
+.numberButton-default {
   border: 1px solid black;
   font-size: calc(3px + 2vmin);
   padding: 20px;
   cursor: pointer;
   background: rgb(176, 176, 176);
+}
+
+.numberButton-selected {
+  border: 1px solid black;
+  font-size: calc(3px + 2vmin);
+  padding: 20px;
+  cursor: pointer;
+  background: rgb(98, 127, 230);
+}
+
+.numberButton-wrong {
+  border: 1px solid black;
+  font-size: calc(3px + 2vmin);
+  padding: 20px;
+  cursor: pointer;
+  background: rgb(230, 98, 98);
+}
+
+.numberButton-checked {
+  border: 1px solid black;
+  font-size: calc(3px + 2vmin);
+  padding: 20px;
+  cursor: pointer;
+  background: rgb(98, 230, 105);
 }
 
 .starIcon {

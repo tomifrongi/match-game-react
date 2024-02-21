@@ -1,29 +1,55 @@
 import React, { useState } from "react";
 import "./App.css";
+import Tile from "./Tile.js";
 import Timer from "./Timer.js";
 
 function App() {
-  const [numbers, setNumbers] = useState(
-    Array.from({ length: 9 }, (_, i) => i + 1)
-  );
-  
-  const enableTimer = true
-  const gameState = "playing"
-  
-  const handleClick = (number: number) => {
-    console.log(`Clicked ${number}`);
-  };
+  const [numbers, setNumbers] = useState([
+    { number: 1, status: "" },
+    { number: 2, status: "" },
+    { number: 3, status: "" },
+    { number: 4, status: "" },
+    { number: 5, status: "" },
+    { number: 6, status: "" },
+    { number: 7, status: "" },
+    { number: 8, status: "" },
+    { number: 9, status: "" },
+  ]);
 
-  let starsOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
+  
   const getRandomNumber = (min: number, max: number) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
   };
 
-  const randomIndex = getRandomNumber(0, starsOptions.length - 1);
-  const selectedStars = starsOptions[randomIndex];
+  let starsOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  let starNumber = 0;
 
-  const starsToShow = Array.from({ length: selectedStars }, (_, i) => i + 1);
+  function getAvailableStars() {
+    const randomIndex = getRandomNumber(0, starsOptions.length - 1);
+    const selectedStars = starsOptions[randomIndex];
+    starNumber = selectedStars;
+    return Array.from({ length: selectedStars }, (_, i) => i + 1);
+  }
+
+  const renderStars = getAvailableStars();
+
+  const [clicked, setClicked] = useState(false);
+
+  const handleClickButton = (number: number) => {
+    const updatedNumbers = numbers.map((item) => {
+      if (item.number === number) {
+        if (item.status === "selected") {
+          return { ...item, status: "" };
+        }
+        return { ...item, status: "selected" };
+      }
+      return item;
+    });
+    setNumbers(updatedNumbers);
+  };
+
+  const enableTimer = true;
+  const gameState = "playing";
 
   return (
     <div className="App">
@@ -43,7 +69,7 @@ function App() {
             <tr>
               <td>
                 <div className="gridCustom">
-                  {starsToShow.map((star) => (
+                  {renderStars.map((star) => (
                     <span className="starIcon" key={star} aria-label="star">
                       ⭐
                     </span>
@@ -53,13 +79,12 @@ function App() {
               <td>
                 <div className="gridCustom">
                   {numbers.map((number) => (
-                    <button
-                      key={number}
-                      className="numberButton"
-                      onClick={() => handleClick(number)}
-                    >
-                      {number}
-                    </button>
+                    <Tile
+                      key={number.number}
+                      number={number.number}
+                      status={number.status}
+                      onClick={handleClickButton}
+                    ></Tile>
                   ))}
                 </div>
               </td>
