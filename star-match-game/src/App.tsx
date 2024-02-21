@@ -1,12 +1,15 @@
 import React, { useState } from "react";
-import logo from "./logo.svg";
 import "./App.css";
+import Timer from "./Timer.js";
 
 function App() {
   const [numbers, setNumbers] = useState(
     Array.from({ length: 9 }, (_, i) => i + 1)
   );
-
+  
+  const enableTimer = true
+  const gameState = "playing"
+  
   const handleClick = (number: number) => {
     console.log(`Clicked ${number}`);
   };
@@ -39,16 +42,16 @@ function App() {
           <tbody>
             <tr>
               <td>
-                <div className="gridStar">
+                <div className="gridCustom">
                   {starsToShow.map((star) => (
-                    <span key={star} role="img" aria-label="star">
+                    <span className="starIcon" key={star} aria-label="star">
                       ⭐
                     </span>
                   ))}
                 </div>
               </td>
               <td>
-                <div className="gridNumber">
+                <div className="gridCustom">
                   {numbers.map((number) => (
                     <button
                       key={number}
@@ -63,9 +66,11 @@ function App() {
             </tr>
           </tbody>
           <tfoot>
-            <td colSpan={2}>
-              <p>tiempo restante para resolver: {Math.random()}</p>
-            </td>
+            <tr>
+              <td colSpan={2}>
+                <Timer start={enableTimer} state={gameState} />
+              </td>
+            </tr>
           </tfoot>
         </table>
       </header>
