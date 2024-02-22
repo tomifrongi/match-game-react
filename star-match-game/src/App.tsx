@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import Tile from "./Tile.js";
+import Star from "./Star.js";
 import Timer from "./Timer.js";
 
 function App() {
+  // number buttons
   const [numbers, setNumbers] = useState([
     { number: 1, status: "" },
     { number: 2, status: "" },
@@ -16,40 +18,111 @@ function App() {
     { number: 9, status: "" },
   ]);
 
-  
+  // Stars functions
   const getRandomNumber = (min: number, max: number) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
   };
 
-  let starsOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-  let starNumber = 0;
+  const generarPosiblesSumas = () => {
+    const numerosDisponibles = numbers.filter((num) => num.status === "");
+    const posiblesSumas = [];
 
-  function getAvailableStars() {
+    for (let i = 0; i < numerosDisponibles.length; i++) {
+      posiblesSumas.push(numerosDisponibles[i].number);
+    }
+
+    for (let i = 0; i < numerosDisponibles.length - 1; i++) {
+      for (let j = i + 1; j < numerosDisponibles.length; j++) {
+        const suma =
+          numerosDisponibles[i].number + numerosDisponibles[j].number;
+        if (suma !== 0) {
+          console.log();
+          posiblesSumas.push(suma);
+        }
+      }
+    }
+    return posiblesSumas;
+  };
+
+  const [starRefresh, setStarRefresh] = useState(false);
+  const [starNumber, setStarNumber] = useState(0);
+  const [gameState, setGameState] = useState("playing");
+
+  useEffect(() => {
+    const starsOptions = generarPosiblesSumas();
+    if (starsOptions.length === 0) {
+      setStarNumber(1);
+      setGameState("win");
+      return;
+    }
     const randomIndex = getRandomNumber(0, starsOptions.length - 1);
     const selectedStars = starsOptions[randomIndex];
-    starNumber = selectedStars;
-    return Array.from({ length: selectedStars }, (_, i) => i + 1);
-  }
+    setStarNumber(selectedStars);
+    setStarRefresh(false);
+  }, [starRefresh]);
 
-  const renderStars = getAvailableStars();
+  let renderStars = Array.from({ length: starNumber }, (_, i) => i + 1);
 
-  const [clicked, setClicked] = useState(false);
+  // timer functions
+  let startTimer = false;
+  const [enableTimer, setEnableTimer] = useState(false);
+
+  // Game functions
+  const [partialSum, setPartialSum] = useState(0);
+
+  useEffect(() => {
+    if (partialSum === starNumber) {
+      console.log("Ganaste");
+      setPartialSum(0);
+      const updatedNumbers = numbers.map((item) => {
+        if (item.status === "selected") {
+          return { ...item, status: "checked" };
+        }
+        return item;
+      });
+      setNumbers(updatedNumbers);
+      setStarRefresh(true);
+    } else if (partialSum > starNumber) {
+      const updatedNumbers = numbers.map((item) => {
+        if (item.status === "selected") {
+          return { ...item, status: "wrong" };
+        }
+        return item;
+      });
+      setNumbers(updatedNumbers);
+    } else if (partialSum < starNumber) {
+      const updatedNumbers = numbers.map((item) => {
+        if (item.status === "wrong") {
+          return { ...item, status: "selected" };
+        }
+        return item;
+      });
+      setNumbers(updatedNumbers);
+    }
+  }, [partialSum, starNumber]);
 
   const handleClickButton = (number: number) => {
+    if (!startTimer) {
+      startTimer = true;
+      setEnableTimer(true);
+    }
+    let partialLocal = partialSum;
     const updatedNumbers = numbers.map((item) => {
       if (item.number === number) {
-        if (item.status === "selected") {
+        if (item.status === "selected" || item.status === "wrong") {
+          partialLocal -= number;
           return { ...item, status: "" };
+        } else if (item.status === "checked") {
+          return item;
         }
+        partialLocal += number;
         return { ...item, status: "selected" };
       }
       return item;
     });
     setNumbers(updatedNumbers);
+    setPartialSum(partialLocal);
   };
-
-  const enableTimer = true;
-  const gameState = "playing";
 
   return (
     <div className="App">
@@ -68,11 +141,9 @@ function App() {
           <tbody>
             <tr>
               <td>
-                <div className="gridCustom">
+                <div className = {gameState !== "playing" ? "" : "gridCustom"}>
                   {renderStars.map((star) => (
-                    <span className="starIcon" key={star} aria-label="star">
-                      ⭐
-                    </span>
+                    <Star key={star} status={gameState}/>
                   ))}
                 </div>
               </td>

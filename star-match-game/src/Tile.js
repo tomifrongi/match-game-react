@@ -3,7 +3,6 @@ import "./App.css";
 
 function Tile({ number, status, onClick }) {
   const handleClick = (param) => {
-
     onClick(param);
   };
   const className = status !== "" ? "numberButton-" + status : "numberButton-default";
