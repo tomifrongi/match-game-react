@@ -159,8 +159,8 @@ function App() {
             <tr>
               <th colSpan={2}>
                 <p>
-                  Seleccione una combinacion de numeros que logre la cantidad de
-                  estrellas
+                  Choose any number combination that adds up to the number of
+                  stars displayed
                 </p>
               </th>
             </tr>
