@@ -1,17 +1,10 @@
-import React, { useState, useEffect } from "react";
 import "./App.css";
 
-function Star({status}) {
-  if (status === "lost") {
+function Star({status, onReset}) {
+  if(status === "win" || status === "lose"){
     return (
-      <span className="starIcon" aria-label="star">
-        ⭐
-      </span>
-    );
-  }else if(status === "win"){
-    return (
-      <button>
-        Volver a jugar
+      <button onClick={() => onReset()}>
+        New Game
       </button>
     );
   } else {
